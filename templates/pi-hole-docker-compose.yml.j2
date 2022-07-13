@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+---
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: {{ pihole_image }}
+    pull_policy: always
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+    environment:
+      TZ: '{{ pihole_timezone }}'
+      WEBPASSWORD: '{{ pihole_password }}'
+      PIHOLE_DNS_: "{{ pihole_dns }}"
+      FTLCONF_MAXDBDAYS: "{{ pihole_ftl_max_db_days }}"
+    volumes:
+      - './etc-pihole/:/etc/pihole/'
+      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped

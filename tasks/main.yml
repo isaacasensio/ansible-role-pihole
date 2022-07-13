@@ -1,0 +1,45 @@
+---
+- name: Create pi-hole folder on Pi.
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+    - "/etc/pi-hole"
+    - "/etc/pi-hole/dnsmasq.d"
+  become: true
+
+- name: Copy pi-hole docker-compose template.
+  ansible.builtin.template:
+    src: templates/pi-hole-docker-compose.yml.j2
+    dest: "/etc/pi-hole/docker-compose.yml"
+    mode: 0644
+  become: true
+
+- name: Create systemd pi-hole service.
+  ansible.builtin.template:
+    src: templates/pi-hole.service.j2
+    dest: "/etc/systemd/system/pi-hole.service"
+    mode: 0640
+  become: true
+
+- name: Ensure pi-hole.service is started
+  ansible.builtin.systemd:
+    state: started
+    enabled: true
+    name: pi-hole
+  become: true
+
+- name: Check pihole container
+  ansible.builtin.uri:
+    url: http://localhost
+  register: result
+  until: result.status == 200
+  retries: 5
+  delay: 30
+
+- name: Remove old image versions
+  docker_prune:
+    images: true
+    images_filters:
+      dangling: false

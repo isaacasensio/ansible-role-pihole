@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: iasensio
+  role_name: pihole
+  description: Install pi-hole as a docker container.
+  company: MyMac, LLC
+  license: MIT
+  min_ansible_version: "2.4"
+
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+
+  galaxy_tags:
+    - system
+    - docker
+    - adblocker
+    - pihole
