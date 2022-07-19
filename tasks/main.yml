@@ -11,7 +11,7 @@
 
 - name: Copy pi-hole docker-compose template.
   ansible.builtin.template:
-    src: templates/pi-hole-docker-compose.yml.j2
+    src: templates/docker-compose.yml.j2
     dest: "/etc/pi-hole/docker-compose.yml"
     mode: 0644
   become: true

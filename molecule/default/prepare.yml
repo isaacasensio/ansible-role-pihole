@@ -3,8 +3,7 @@
   hosts: all
   become: true
   vars:
-    ampache_container_user: root
-    docker_compose_version: "v2.6.1"
+    docker_compose_version: "v2.4.1"
     pip_install_packages:
       - requests
       - docker
