@@ -9,18 +9,18 @@ services:
     image: {{ pihole_image }}
     pull_policy: always
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "67:67/udp"
-      - "80:80/tcp"
+      - "{{ pihole_dns_tcp_host_port }}:53/tcp"
+      - "{{ pihole_dns_udp_host_port }}:53/udp"
+      - "{{ pihole_dns_bootp_udp_host_port }}:67/udp"
+      - "{{ pihole_ui_host_port }}:80/tcp"
     environment:
       TZ: '{{ pihole_timezone }}'
       WEBPASSWORD: '{{ pihole_password }}'
       PIHOLE_DNS_: "{{ pihole_dns }}"
       FTLCONF_MAXDBDAYS: "{{ pihole_ftl_max_db_days }}"
     volumes:
-      - './etc-pihole/:/etc/pihole/'
-      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      - '{{ pihole_host_config_path }}/etc-pihole/:/etc/pihole/'
+      - '{{ pihole_host_config_path }}/etc-dnsmasq.d/:/etc/dnsmasq.d/'
     cap_add:
       - NET_ADMIN
     restart: unless-stopped

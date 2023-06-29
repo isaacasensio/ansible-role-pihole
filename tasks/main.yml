@@ -1,26 +1,56 @@
 ---
-- name: Create pi-hole folder on Pi.
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0755
-  loop:
-    - "/etc/pi-hole"
-    - "/etc/pi-hole/dnsmasq.d"
+- name: Create pihole user
+  ansible.builtin.user:
+    name: "{{ pihole_container_user }}"
+    shell: /sbin/nologin
+    create_home: true
+    state: present
   become: true
 
-- name: Copy pi-hole docker-compose template.
+- name: Create pihole user
+  ansible.builtin.user:
+    name: "{{ pihole_container_user }}"
+    shell: /sbin/nologin
+    create_home: true
+    state: present
+  become: true
+
+- name: Get created user metadata
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ pihole_container_user }}"
+
+- name: Setting user id and group id facts
+  ansible.builtin.set_fact:
+    created_uid: "{{ ansible_facts.getent_passwd[pihole_container_user].1 }}"
+    created_gid: "{{ ansible_facts.getent_passwd[pihole_container_user].2 }}"
+
+- name: Ensure pihole folders exists
+  become: true
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    owner: "{{ pihole_container_user }}"
+    group: "{{ pihole_container_user }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ pihole_host_config_path }}"
+    - "{{ pihole_host_config_path }}/dnsmasq.d"
+
+- name: Copy pihole docker-compose template.
   ansible.builtin.template:
     src: templates/docker-compose.yml.j2
-    dest: "/etc/pi-hole/docker-compose.yml"
-    mode: 0644
+    dest: "{{ pihole_host_config_path }}/docker-compose.yml"
+    owner: "{{ pihole_container_user }}"
+    group: "{{ pihole_container_user }}"
+    mode: "0644"
   become: true
 
 - name: Create systemd pi-hole service.
   ansible.builtin.template:
     src: templates/pi-hole.service.j2
     dest: "/etc/systemd/system/pi-hole.service"
-    mode: 0640
+    mode: "0640"
   become: true
 
 - name: Ensure pi-hole.service is started
@@ -30,16 +60,17 @@
     name: pi-hole
   become: true
 
-- name: Check pihole container
+- name: Check pihole container is up
   ansible.builtin.uri:
-    url: http://localhost
+    url: "http://localhost:{{ pihole_ui_host_port }}"
+    status_code: [200, 403]
   register: result
-  until: result.status == 200
+  until: result.status == 200 or result.status == 403
   retries: 5
-  delay: 30
+  delay: 60
 
 - name: Remove old image versions
-  docker_prune:
+  community.docker.docker_prune:
     images: true
     images_filters:
       dangling: false

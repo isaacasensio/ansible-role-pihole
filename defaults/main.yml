@@ -1,6 +1,12 @@
 ---
+pihole_container_user: "pihole"
 pihole_timezone: Europe/Madrid
-pihole_image: "pihole/pihole:2022.04.3"
+pihole_image: "pihole/pihole:latest"
 pihole_ftl_max_db_days: "180"
 pihole_dns: "8.8.8.8"
 pihole_password: "password"
+pihole_host_config_path: "/etc/pihole"
+pihole_ui_host_port: 7500
+pihole_dns_tcp_host_port: 53
+pihole_dns_udp_host_port: 53
+pihole_dns_bootp_udp_host_port: 67

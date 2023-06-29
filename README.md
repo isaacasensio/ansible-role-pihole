@@ -37,14 +37,14 @@ pihole_password: "password"
 Administration password.
 
 ```
-pihole_container_user: pi
+pihole_container_user: pihole
 ```
 user who will run the container
 
 Dependencies
 ------------
 
-[geerlingguy.docker_arm](https://github.com/geerlingguy/ansible-role-docker_arm)
+[geerlingguy.docker](https://github.com/geerlingguy/ansible-role-docker)
 
 Example Playbook
 ----------------
@@ -53,7 +53,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - iasensio.pihole_arm
+         - iasensio.pihole
 
 License
 -------

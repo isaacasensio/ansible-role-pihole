@@ -7,10 +7,10 @@ After=docker.service
 Restart=always
 User={{ pihole_container_user }}
 Group=docker
-WorkingDirectory=/etc/pi-hole
-ExecStartPre=/usr/local/bin/docker-compose -f /etc/pi-hole/docker-compose.yml down
-ExecStart=/usr/local/bin/docker-compose -f /etc/pi-hole/docker-compose.yml up
-ExecStop=/usr/local/bin/docker-compose -f /etc/pi-hole/docker-compose.yml down
+WorkingDirectory={{ pihole_host_config_path }}
+ExecStartPre=/usr/local/bin/docker-compose -f {{ pihole_host_config_path }}/docker-compose.yml down
+ExecStart=/usr/local/bin/docker-compose -f {{ pihole_host_config_path }}/docker-compose.yml up
+ExecStop=/usr/local/bin/docker-compose -f {{ pihole_host_config_path }}/docker-compose.yml down
 
 [Install]
 WantedBy=multi-user.target
