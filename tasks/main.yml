@@ -53,6 +53,21 @@
     mode: "0640"
   become: true
 
+# Reasoning: https://github.com/pi-hole/docker-pi-hole#installing-on-ubuntu
+- name: Ensure systemd-resolved.service is stopped and disabled
+  ansible.builtin.systemd:
+    state: stopped
+    name: systemd-resolved
+    enabled: false
+  become: true
+
+- name: Replace name server
+  ansible.builtin.replace:
+    path: /etc/resolv.conf
+    regexp: '^nameserver 127.0.0.53'
+    replace: 'nameserver 8.8.8.8'
+  become: true
+
 - name: Ensure pi-hole.service is started
   ansible.builtin.systemd:
     state: started
