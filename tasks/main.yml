@@ -7,14 +7,6 @@
     state: present
   become: true
 
-- name: Create pihole user
-  ansible.builtin.user:
-    name: "{{ pihole_container_user }}"
-    shell: /sbin/nologin
-    create_home: true
-    state: present
-  become: true
-
 - name: Get created user metadata
   ansible.builtin.getent:
     database: passwd
