@@ -24,6 +24,15 @@ services:
     volumes:
       - '{{ pihole_host_config_path }}/etc-pihole/:/etc/pihole/'
       - '{{ pihole_host_config_path }}/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    {% if pihole_network_name is defined and pihole_network_name != '' %}
+    networks:
+      - {{ pihole_network_name }}
+    {% endif %}
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
+{% if pihole_network_name is defined and pihole_network_name != '' %}
+networks:
+  {{ pihole_network_name }}:
+    external: true
+{% endif %}
